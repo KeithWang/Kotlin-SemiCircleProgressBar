@@ -1,5 +1,5 @@
 # Kotlin SemiCircleProgressBar
-The project is a simple custom view from an extended View.
+The project is a simple custom view that shows the semi-circle progress bar from an extended View.
 <br><br>
 ## The UI Flow
 <br>
