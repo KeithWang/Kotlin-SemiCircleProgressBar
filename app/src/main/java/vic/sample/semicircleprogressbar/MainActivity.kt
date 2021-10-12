@@ -15,17 +15,17 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.SemiCircleProgressBar.setProgressColor(ContextCompat.getColor(this, R.color.black))
-        binding.SemiCircleProgressBar.setProgressHolderColor(
-            ContextCompat.getColor(this, R.color.teal_200)
-        )
-        binding.SemiCircleProgressBar.setProgressWidth(24)
-        binding.SemiCircleProgressBar.setProgressHolderWidth(36)
-
         GlobalScope.launch(Dispatchers.Main) {
             for (i in 0..100) {
                 delay(20)
-                binding.SemiCircleProgressBar.setProgress(i)
+                binding.SemiCircleProgressBarTopClockTrue.setProgress(i)
+                binding.SemiCircleProgressBarTopClockFalse.setProgress(i)
+                binding.SemiCircleProgressBarBottomClockTrue.setProgress(i)
+                binding.SemiCircleProgressBarBottomClockFalse.setProgress(i)
+                binding.SemiCircleProgressBarLeftClockTrue.setProgress(i)
+                binding.SemiCircleProgressBarLeftClockFalse.setProgress(i)
+                binding.SemiCircleProgressBarRightClockTrue.setProgress(i)
+                binding.SemiCircleProgressBarRightClockFalse.setProgress(i)
             }
             binding.seekbar.visibility = View.VISIBLE
             binding.seekbar.progress = 100
@@ -35,7 +35,14 @@ class MainActivity : AppCompatActivity() {
         binding.seekbar.onProgressChanged { seekBar, progress, fromUser ->
             val i = seekBar?.progress
             i?.let {
-                binding.SemiCircleProgressBar.setProgress(it)
+                binding.SemiCircleProgressBarTopClockTrue.setProgress(it)
+                binding.SemiCircleProgressBarTopClockFalse.setProgress(it)
+                binding.SemiCircleProgressBarBottomClockTrue.setProgress(it)
+                binding.SemiCircleProgressBarBottomClockFalse.setProgress(it)
+                binding.SemiCircleProgressBarLeftClockTrue.setProgress(it)
+                binding.SemiCircleProgressBarLeftClockFalse.setProgress(it)
+                binding.SemiCircleProgressBarRightClockTrue.setProgress(it)
+                binding.SemiCircleProgressBarRightClockFalse.setProgress(it)
             }
         }
     }

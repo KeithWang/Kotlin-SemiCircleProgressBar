@@ -2,6 +2,7 @@ package vic.sample.semicircleprogressbar.custom
 
 import android.content.Context
 import android.graphics.*
+import android.icu.text.Transliterator
 import android.util.AttributeSet
 import android.view.View
 import vic.sample.semicircleprogressbar.R
@@ -17,6 +18,12 @@ class SemiCircleProgressBar : View {
         const val PADDING_DEFAULT_VALUE = 4
         const val WIDTH_DEFAULT_VALUE = 16
         const val HOLDER_WIDTH_DEFAULT_VALUE = 24
+        const val CLOCKWISE_DEFAULT = true
+
+        const val POSITION_TOP = 0
+        const val POSITION_BOTTOM = 1
+        const val POSITION_LEFT = 2
+        const val POSITION_RIGHT = 3
     }
 
     private var mPadding = PADDING_DEFAULT_VALUE.dp
@@ -31,6 +38,9 @@ class SemiCircleProgressBar : View {
     private var mProgressBarWidth = UNINITIALIZED_INT_VALUE
     private var mProgressBarHolderWidth = UNINITIALIZED_INT_VALUE
 
+    private var mProgressClockwise = CLOCKWISE_DEFAULT
+
+    private var mPosition = POSITION_TOP
 
     private var mTop = 0
     private var mLeft = 0
@@ -73,6 +83,19 @@ class SemiCircleProgressBar : View {
             typedArray.getInteger(
                 R.styleable.SemiCircleProgressBar_progressHolderWidth, HOLDER_WIDTH_DEFAULT_VALUE
             )
+        /*
+        * The clockwise progress
+        * */
+        mProgressClockwise =
+            typedArray.getBoolean(
+                R.styleable.SemiCircleProgressBar_progressClockwise, mProgressClockwise
+            )
+
+        /*
+        * The circle start angle position
+        * */
+        mPosition =
+            typedArray.getInteger(R.styleable.SemiCircleProgressBar_position, mPosition)
 
         /*
         * Init the maximum and minimum
@@ -119,15 +142,28 @@ class SemiCircleProgressBar : View {
 
         if (mMaxProgress > mMinProgress && mCurrentProgress in mMinProgress..mMaxProgress) {
 
-            val progressAmount = (mCurrentProgress.toFloat() / (mMaxProgress - mMinProgress).toFloat() * 180)
+            var startAngle = when (mPosition) {
+                POSITION_BOTTOM -> 0
+                POSITION_LEFT -> 90
+                POSITION_RIGHT -> 270
+                else -> 180
+            }
+
+            var progressAmount =
+                (mCurrentProgress.toFloat() / (mMaxProgress - mMinProgress).toFloat() * 180)
 
             canvas.drawArc(
-                getProgressBarRectF(), 180.toFloat(), 180.toFloat(), false,
+                getProgressBarRectF(), startAngle.toFloat(), 180.toFloat(), false,
                 getPaint(mProgressBarHolderColor, mProgressBarHolderWidth)
             )
 
+            if (!mProgressClockwise) {
+                startAngle -= 180
+                progressAmount = -progressAmount
+            }
+
             canvas.drawArc(
-                getProgressBarRectF(), 180.toFloat(), progressAmount, false,
+                getProgressBarRectF(), startAngle.toFloat(), progressAmount, false,
                 getPaint(mProgressBarColor, mProgressBarWidth)
             )
         }
@@ -146,10 +182,42 @@ class SemiCircleProgressBar : View {
     }
 
     private fun getProgressBarRectF(): RectF {
-        return RectF(
-            mLeft.toFloat(), mTop.toFloat(),
-            (mRight - mPadding).toFloat(), (mBottom - mPadding * 3).toFloat()
-        )
+        return when (mPosition) {
+            POSITION_RIGHT -> {
+                RectF(
+                    -mRight.toFloat() + mPadding * 3,
+                    mTop.toFloat(),
+                    (mRight - mPadding).toFloat(),
+                    (mBottom / 2 - mPadding).toFloat()
+                )
+            }
+            POSITION_LEFT -> {
+                RectF(
+                    mLeft.toFloat(),
+                    mTop.toFloat(),
+                    (mRight * 2 - mPadding * 3).toFloat(),
+                    (mBottom / 2 - mPadding).toFloat()
+                )
+            }
+            POSITION_BOTTOM -> {
+                RectF(
+                    mLeft.toFloat(),
+                    -mBottom.toFloat() / 2 + mPadding * 3,
+                    (mRight - mPadding).toFloat(),
+                    (mBottom / 2 - mPadding).toFloat()
+                )
+            }
+            else -> {
+                RectF(
+                    mLeft.toFloat(),
+                    mTop.toFloat(),
+                    (mRight - mPadding).toFloat(),
+                    (mBottom - mPadding * 3).toFloat()
+                )
+            }
+        }
+
+
     }
 
     fun setProgress(percent: Int) {
