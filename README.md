@@ -11,6 +11,8 @@ The project is a simple custom view that shows the semi-circle progress bar from
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toTopOf="parent"
+    app:position="TOP"
+    app:progressClockwise="true"
     app:currentProgress="30"
     app:progressColor="@color/black"
     app:progressHolderColor="@color/teal_200"
@@ -27,6 +29,13 @@ The project is a simple custom view that shows the semi-circle progress bar from
     <attr name="progressHolderColor" format="color" />
     <attr name="progressWidth" format="integer" />
     <attr name="progressHolderWidth" format="integer" />
+    <attr name="progressClockwise" format="boolean" />
+    <attr name="position" format="enum">
+        <enum name="TOP" value="0" />
+        <enum name="BOTTOM" value="1" />
+        <enum name="LEFT" value="2" />
+        <enum name="RIGHT" value="3" />
+    </attr>
 </declare-styleable>
 ```
 ## The UI Flow
